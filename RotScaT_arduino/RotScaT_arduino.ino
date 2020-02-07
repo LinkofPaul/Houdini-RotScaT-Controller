@@ -22,7 +22,7 @@ const int encodeTwo = 3;
    int intensity_Endocer = readEncoder();
 
    if(prev_Encoder_State != intensity_Endocer){
-    Serial.print("y");
+    Serial.print("x");
     Serial.println(intensity_Endocer);
    }
 
