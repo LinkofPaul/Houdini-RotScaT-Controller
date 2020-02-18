@@ -12,6 +12,7 @@ const int encodeTwo = 3;
  int last_state; 
 
  int readEncoder();
+ void readSerialandDisplay();
 
  int prev_Encoder_State;
 
@@ -22,7 +23,6 @@ const int encodeTwo = 3;
    // initialize the LCD
    lcd.begin();
    lcd.backlight();
-   lcd.print("Hello, world!");
    
    Serial.begin(9600);
    
@@ -33,13 +33,24 @@ const int encodeTwo = 3;
  void loop() { 
    int intensity_Endocer = readEncoder();
 
-   if(prev_Encoder_State != intensity_Endocer){
-    Serial.print("x");
-    Serial.println(intensity_Endocer);
+   if(prev_Encoder_State < intensity_Endocer){
+    Serial.println("x");
+   }else if(prev_Encoder_State > intensity_Endocer){
+    Serial.println("x-");
    }
 
   prev_Encoder_State = intensity_Endocer;
+
+  readSerialandDisplay();
  }
+
+void readSerialandDisplay(){
+  if(Serial.available()){
+    String node_val = Serial.readString();
+    lcd.clear();
+    lcd.print(node_val);
+  } 
+}
 
  int readEncoder(){
   state = digitalRead(encodeOne); 
@@ -47,9 +58,9 @@ const int encodeTwo = 3;
    if (state != last_state){     
      // If different, means encoder is rotating clockwise
      if (digitalRead(encodeTwo) != state) {  
-      counter--;
-     } else {
       counter++;
+     } else {
+      counter--;
      }
    } 
    last_state = state; 
