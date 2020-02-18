@@ -1,3 +1,9 @@
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+// Set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 const int encodeOne = 2;
 const int encodeTwo = 3;
 
@@ -12,8 +18,14 @@ const int encodeTwo = 3;
  void setup() { 
    pinMode(encodeOne,INPUT);
    pinMode(encodeTwo,INPUT);
+
+   // initialize the LCD
+   lcd.begin();
+   lcd.backlight();
+   lcd.print("Hello, world!");
    
    Serial.begin(9600);
+   
    // Reads the initial state of the outputA
    last_state = digitalRead(encodeOne);   
  } 

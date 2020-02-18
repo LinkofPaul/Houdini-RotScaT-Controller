@@ -36,7 +36,7 @@ def worker():
     except:
         print("Serial set up on %s failed" %(com))
         print("Exiting...")
-        hou.session.ser.close()
+        #hou.session.ser.close()
         sys.exit()
 
     # Parameters: s == scale, t == transform and r == rotate
