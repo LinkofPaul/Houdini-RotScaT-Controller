@@ -1,43 +1,40 @@
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
+#include <RotaryEncoder.h>
 
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-const int encodeOne = 2;
-const int encodeTwo = 3;
+RotaryEncoder encoder(5, 6);
 
 int counter = 0; 
-int state;
-int last_state; 
+long oldPosition = 0;
 int prev_encoder_reading = 0;
 
 int readEncoder();
 void readSerialAndwriteDisplay();
 
-void setup() {
-  pinMode(encodeOne,INPUT);
-  pinMode(encodeTwo,INPUT); 
-  
+void setup() { 
   // initialize the LCD
   lcd.begin();
   lcd.backlight();
-   
-  Serial.begin(9600);
 
-  // Reads the initial state of the outputA
-  last_state = digitalRead(encodeOne); 
+  // initialize serial communication
+  Serial.begin(9600);
 } 
  
 void loop() { 
   int encoder_reading = readEncoder();
 
   if(prev_encoder_reading < encoder_reading){
-    Serial.println("x");
+    Serial.println(encoder_reading);
+    Serial.println("x+");
+    prev_encoder_reading = encoder_reading;
   }else if(prev_encoder_reading > encoder_reading){
+    Serial.println(encoder_reading);
     Serial.println("x-");
+    prev_encoder_reading = encoder_reading;
   }
-  prev_encoder_reading = encoder_reading;
   
   readSerialAndwriteDisplay();
 }
@@ -57,16 +54,14 @@ void readSerialAndwriteDisplay(){
 }
 
 int readEncoder(){
-  state = digitalRead(encodeOne); 
-  // If condition true, pulse has occured
-  if (state != last_state){     
-    // If different, means encoder is rotating clockwise
-    if (digitalRead(encodeTwo) != state) {  
-      counter++;
-    } else {
-      counter--;
-    }
-  } 
-  last_state = state; 
+  encoder.tick();
+  long newPosition = encoder.getPosition();
+  if(oldPosition < newPosition){
+    counter--;
+    oldPosition = newPosition;
+  } else if(oldPosition > newPosition){
+    counter++;
+    oldPosition = newPosition;
+  }
   return counter;
 }
