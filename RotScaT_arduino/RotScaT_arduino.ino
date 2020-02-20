@@ -27,15 +27,13 @@ void loop() {
   int encoder_reading = readEncoder();
 
   if(prev_encoder_reading < encoder_reading){
-    Serial.println(encoder_reading);
     Serial.println("x+");
     prev_encoder_reading = encoder_reading;
   }else if(prev_encoder_reading > encoder_reading){
-    Serial.println(encoder_reading);
     Serial.println("x-");
     prev_encoder_reading = encoder_reading;
   }
-  
+  delay(5);
   readSerialAndwriteDisplay();
 }
 

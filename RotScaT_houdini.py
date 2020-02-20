@@ -44,17 +44,18 @@ def worker():
         nodes = hou.selectedNodes()
         
         # send parameter data of last selected node to the device
-        try:
-            selected_node = nodes[-1]
-            x_value = selected_node.parm(parm + 'x').eval()
-            y_value = selected_node.parm(parm + 'y').eval()
-            z_value = selected_node.parm(parm + 'z').eval()
-            hou.session.ser.write((str(x_value) + "x " + str(y_value) + "y " + str(z_value) + "z " ).encode())
-        except Exception as e:
-            print(e)
+        #try:
+        #    selected_node = nodes[-1]
+        #    x_value = selected_node.parm(parm + 'x').eval()
+         #   y_value = selected_node.parm(parm + 'y').eval()
+         #   z_value = selected_node.parm(parm + 'z').eval()
+        #    hou.session.ser.write((str(x_value) + "x " + str(y_value) + "y " + str(z_value) + "z " ).encode())
+        #except Exception as e:
+        #    pass
         
         # read from serial til termination character '\n'
         input_line = hou.session.ser.readline()
+        
 
         # check if controller has been disabled
         if not controller_enabled:
@@ -67,9 +68,9 @@ def worker():
         # change movement along one axis or all
         else:
             if input_line[0] == 'x':
-                for node in nodes:
+                for node in nodes: 
                     try:
-                        change = node.parm(parm + 'x').eval() 
+                        change = node.parm(parm + 'x').eval()
                         if input_line[1] == '-':
                             change -= 1
                             hdefereval.executeInMainThreadWithResult(partial(set_x, node, parm, change))
@@ -91,9 +92,9 @@ def worker():
                     except:
                         pass
             elif input_line[0] == 'z':
-                for node in nodes:
+                for node in nodes:  
                     try:
-                        change = node.parm(parm + 'z').eval() 
+                        change = node.parm(parm + 'z').eval()
                         if input_line[1] == '-':
                             change -= 1
                             hdefereval.executeInMainThreadWithResult(partial(set_z, node, parm, change))
@@ -102,17 +103,21 @@ def worker():
                             hdefereval.executeInMainThreadWithResult(partial(set_z, node, parm, change))
                     except:
                         pass
-            else:
-                for node in nodes:
+            elif input_line[0] == 'a':
+                for node in nodes:  
                     try:
                         change_x = node.parm(parm + 'x').eval()
                         change_y = node.parm(parm + 'y').eval()
                         change_z = node.parm(parm + 'z').eval()
-                        if input_line[3] == '-':
-                            change -= 1
+                        if input_line[1] == '-':
+                            change_x -= 1
+                            change_y -= 1
+                            change_z -= 1
                             hdefereval.executeInMainThreadWithResult(partial(set_all, node, parm, change_x, change_y, change_z))
                         else:
-                            change += 1
+                            change_x += 1
+                            change_y += 1
+                            change_z += 1
                             hdefereval.executeInMainThreadWithResult(partial(set_all, node, parm, change_x, change_y, change_z))
                     except:
                         pass
@@ -126,4 +131,4 @@ def start_controller():
     
 def end_controller():
     global controller_enabled
-    controller_enabled = False
+    controller_enabled = False    
