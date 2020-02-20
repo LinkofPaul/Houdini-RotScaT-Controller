@@ -33,21 +33,14 @@ void loop() {
     Serial.println("x-");
     prev_encoder_reading = encoder_reading;
   }
-  delay(5);
   readSerialAndwriteDisplay();
 }
 
 void readSerialAndwriteDisplay(){
   if(Serial.available()){
     String coordinates = Serial.readString();
-    int coord_length = coordinates.length();
-    if(coord_length >= 16){
-      lcd.clear();
-      lcd.print(coordinates.substring(coord_length-17));
-    } else{
-      lcd.clear();
-      lcd.print(coordinates);
-    }
+    lcd.clear();
+    lcd.println(coordinates);
   } 
 }
 
