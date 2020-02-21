@@ -19,17 +19,7 @@ def set_z(node, parm, change):
 def set_all(node, parm, change_x, change_y, change_z):
     node.parm(parm + 'x').set(change_x)
     node.parm(parm + 'y').set(change_y)
-    node.parm(parm + 'z').set(change_z)
-
-def updateDisplay(nodes, parm):
-    try:
-        selected_node = nodes[-1]
-        x_value = selected_node.parm(parm + 'x').eval()
-        y_value = selected_node.parm(parm + 'y').eval()
-        z_value = selected_node.parm(parm + 'z').eval()
-        hou.session.ser.write((str(x_value) + "x " + str(y_value) + "y " + str(z_value) + "z " ).encode())
-    except:
-        pass
+    node.parm(parm + 'z').set(change_z)        
         
 def exit_handler():
     hou.session.ser.write(("end").encode())
@@ -39,6 +29,7 @@ def mainWorker():
     com = "COM4"
     update_timer = time.time()
     atexit.register(exit_handler)
+    display_reset_counter = 0
     
     try:
         hou.session.ser = serial.Serial(com, 9600, timeout=0.2)
@@ -59,13 +50,27 @@ def mainWorker():
         # get all Houdini nodes which are currently selected
         nodes = hou.selectedNodes()
         
-        if (time.time()-update_timer) > 4.0:
-            updateDisplay(nodes, parm)
-            update_timer = time.time()
-            
         # read from serial til termination character '\n'
         input_line = hou.session.ser.readline() 
-                    
+        
+        # show the position of last selected node on an lcd screen
+        if display_reset_counter > 10:
+            first_turn_in_loop = False
+            display_reset_counter = 0
+            try:
+                selected_node = nodes[-1]
+                x_value = selected_node.parm(parm + 'x').eval()
+                y_value = selected_node.parm(parm + 'y').eval()
+                z_value = selected_node.parm(parm + 'z').eval()
+                hou.session.ser.write((str(x_value) + "x " + str(y_value) + "y " + str(z_value) + "z " ).encode())
+            except:
+                pass
+        else:
+            if len(input_line) == 0:
+                display_reset_counter += 1
+            else:
+                display_reset_counter = 0
+        
         if len(input_line) > 0: 
             # change what movement to perform
             if input_line == "s" or input_line == "t" or input_line == "r":
