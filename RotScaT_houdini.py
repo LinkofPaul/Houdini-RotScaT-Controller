@@ -5,6 +5,7 @@ import serial
 import sys
 from functools import partial
 import time
+import atexit
 
 def set_x(node, parm, change):
     node.parm(parm + 'x').set(change)
@@ -29,10 +30,15 @@ def updateDisplay(nodes, parm):
         hou.session.ser.write((str(x_value) + "x " + str(y_value) + "y " + str(z_value) + "z " ).encode())
     except:
         pass
-
+        
+def exit_handler():
+    hou.session.ser.write(("end").encode())
+    hou.session.ser.close()
+        
 def mainWorker():
     com = "COM4"
     update_timer = time.time()
+    atexit.register(exit_handler)
     
     try:
         hou.session.ser = serial.Serial(com, 9600, timeout=0.2)
