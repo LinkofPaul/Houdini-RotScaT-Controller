@@ -45,7 +45,8 @@ def mainWorker():
     
     # Parameters: s == scale, t == transform and r == rotate
     parm = "t"
-
+	# Increments: 0.01, 0.1, 1, 10, 100
+	incr = 1.0
     while True:
         # get all Houdini nodes which are currently selected
         nodes = hou.selectedNodes()
@@ -62,7 +63,7 @@ def mainWorker():
                 x_value = selected_node.parm(parm + 'x').eval()
                 y_value = selected_node.parm(parm + 'y').eval()
                 z_value = selected_node.parm(parm + 'z').eval()
-                hou.session.ser.write((str(x_value) + "x " + str(y_value) + "y " + str(z_value) + "z " ).encode())
+                hou.session.ser.write((str(x_value) + "x" + str(y_value) + "y" + str(z_value) + "z").encode())
             except:
                 pass
         else:
@@ -75,6 +76,9 @@ def mainWorker():
             # change what movement to perform
             if input_line == "s" or input_line == "t" or input_line == "r":
                 parm = input_line
+			# change increment for manipulation
+            elif input_line == "0.01" or input_line == "0.1" or input_line == "1" or input_line == "10" or input_line == "100":
+                incr = float(input_line)
             # change movement along one axis or all
             else:
                 if input_line[0] == 'x':
@@ -82,10 +86,10 @@ def mainWorker():
                         try:
                             change = node.parm(parm + 'x').eval()
                             if input_line[1] == '-':
-                                change -= 1
+                                change -= incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_x, node, parm, change))
                             else:
-                                change += 1
+                                change += incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_x, node, parm, change))
                         except:
                             pass
@@ -94,10 +98,10 @@ def mainWorker():
                         try:
                             change = node.parm(parm + 'y').eval() 
                             if input_line[1] == '-':
-                                change -= 1
+                                change -= incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_y, node, parm, change))
                             else:
-                                change += 1
+                                change += incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_y, node, parm, change))
                         except:
                             pass
@@ -106,10 +110,10 @@ def mainWorker():
                         try:
                             change = node.parm(parm + 'z').eval()
                             if input_line[1] == '-':
-                                change -= 1
+                                change -= incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_z, node, parm, change))
                             else:
-                                change += 1
+                                change += incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_z, node, parm, change))
                         except:
                             pass
@@ -120,14 +124,14 @@ def mainWorker():
                             change_y = node.parm(parm + 'y').eval()
                             change_z = node.parm(parm + 'z').eval()
                             if input_line[1] == '-':
-                                change_x -= 1
-                                change_y -= 1
-                                change_z -= 1
+                                change_x -= incr
+                                change_y -= incr
+                                change_z -= incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_all, node, parm, change_x, change_y, change_z))
                             else:
-                                change_x += 1
-                                change_y += 1
-                                change_z += 1
+                                change_x += incr
+                                change_y += incr
+                                change_z += incr
                                 hdefereval.executeInMainThreadWithResult(partial(set_all, node, parm, change_x, change_y, change_z))
                         except:
                             pass
