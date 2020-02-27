@@ -45,8 +45,8 @@ def mainWorker():
     
     # Parameters: s == scale, t == transform and r == rotate
     parm = "t"
-	# Increments: 0.01, 0.1, 1, 10, 100
-	incr = 1.0
+    # Increments: 0.01, 0.1, 1, 10, 100
+    incr = 1.0
     while True:
         # get all Houdini nodes which are currently selected
         nodes = hou.selectedNodes()
@@ -74,10 +74,10 @@ def mainWorker():
         
         if len(input_line) > 0: 
             # change what movement to perform
-            if input_line == "s" or input_line == "t" or input_line == "r":
+            if input_line[0] == 's' or input_line[0] == 't' or input_line[0] == 'r':
                 parm = input_line
-			# change increment for manipulation
-            elif input_line == "0.01" or input_line == "0.1" or input_line == "1" or input_line == "10" or input_line == "100":
+            # change increment for manipulation
+            elif (input_line[0] == '1') or (input_line[0] == '1' and input_line[1] == '0') or (input_line[0] == '1' and input_line[1] == '0' and input_line[2] == '0') or (input_line[0] == '0' and input_line[1] == '.' and input_line[2] == '0' and input_line[3] == '1') or (input_line[0] == '0' and input_line[1] == '.' and input_line[2] == '1'):
                 incr = float(input_line)
             # change movement along one axis or all
             else:
@@ -140,4 +140,3 @@ mainThread = threading.Thread(target=mainWorker)
 mainThread.daemon = True
 mainThread.start()
     
- 
