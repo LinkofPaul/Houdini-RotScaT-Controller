@@ -75,7 +75,7 @@ def mainWorker():
         if len(input_line) > 0: 
             # change what movement to perform
             if input_line[0] == 's' or input_line[0] == 't' or input_line[0] == 'r':
-                parm = input_line
+                parm = input_line[0]
             # change increment for manipulation
             elif (input_line[0] == '1') or (input_line[0] == '1' and input_line[1] == '0') or (input_line[0] == '1' and input_line[1] == '0' and input_line[2] == '0') or (input_line[0] == '0' and input_line[1] == '.' and input_line[2] == '0' and input_line[3] == '1') or (input_line[0] == '0' and input_line[1] == '.' and input_line[2] == '1'):
                 incr = float(input_line)
