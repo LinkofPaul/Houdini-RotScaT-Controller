@@ -47,6 +47,8 @@ def mainWorker():
     parm = "t"
     # Increments: 0.01, 0.1, 1, 10, 100
     incr = 1.0
+    # Checks wether display has been updated once
+    displayUpdated = False
     while True:
         # get all Houdini nodes which are currently selected
         nodes = hou.selectedNodes()
@@ -55,8 +57,8 @@ def mainWorker():
         input_line = hou.session.ser.readline() 
         
         # show the position of last selected node on an lcd screen
-        if display_reset_counter > 10:
-            first_turn_in_loop = False
+        if display_reset_counter > 10 and not displayUpdated:
+            displayUpdated = True
             display_reset_counter = 0
             try:
                 selected_node = nodes[-1]
@@ -70,7 +72,9 @@ def mainWorker():
             if len(input_line) == 0:
                 display_reset_counter += 1
             else:
+                # message has been received
                 display_reset_counter = 0
+                displayUpdated = False
         
         if len(input_line) > 0: 
             # change what movement to perform
@@ -140,3 +144,4 @@ mainThread = threading.Thread(target=mainWorker)
 mainThread.daemon = True
 mainThread.start()
     
+ 
